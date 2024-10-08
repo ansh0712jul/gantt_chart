@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Responsive Gantt Chart</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <style>
+      /* Ensure that the chart container resizes responsively */
+      #gantt_chart {
+        width: 60%;
+        height: 100%;
+        min-height: 400px; /* Set a minimum height */
+      }
+    </style>
+    <script type="text/javascript">
+      // Load the Google Charts library
+      google.charts.load('current', {packages:['gantt']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      var chart;
+      var data;
+      var options;
+
+      function drawChart() {
+        data = new google.visualization.DataTable();
+        
+        // Define the columns for the Gantt chart
+        data.addColumn('string', 'Task ID');
+        data.addColumn('string', 'Task Name');
+        data.addColumn('string', 'Resource');
+        data.addColumn('date', 'Start Date');
+        data.addColumn('date', 'End Date');
+        data.addColumn('number', 'Duration');
+        data.addColumn('number', 'Percent Complete');
+        data.addColumn('string', 'Dependencies');
+
+        // Add rows of task data
+        data.addRows([
+          // Phase 1: Project Design and Requirement Gathering (2 weeks)
+          ['Phase 1', 'Project design and requirement gathering', 'Team', new Date(2024, 9, 1), new Date(2024, 9, 14), null, 100, null],
+          
+          // Phase 2: Backend Development and Database Setup (4 weeks)
+          ['Phase 2', 'Backend development and database setup', 'Backend Team', new Date(2024, 9, 15), new Date(2024, 10, 12), null, 50, 'Phase 1'],
+          
+          // Phase 3: Frontend Development and UI/UX Design (4 weeks)
+          ['Phase 3', 'Frontend development and UI/UX design', 'Frontend Team', new Date(2024, 10, 13), new Date(2024, 11, 10), null, 0, 'Phase 2'],
+          
+          // Phase 4: Testing and Deployment (2 weeks)
+          ['Phase 4', 'Testing and deployment', 'QA & DevOps', new Date(2024, 11, 11), new Date(2024, 11, 24), null, 0, 'Phase 3'],
+          
+          // Phase 5: Final Review and Launch (2 weeks)
+          ['Phase 5', 'Final review and launch', 'Management', new Date(2024, 11, 25), new Date(2025, 0, 7), null, 0, 'Phase 4']
+        ]);
+
+        // Set Gantt chart options
+        options = {
+          gantt: {
+            trackHeight: 50,
+            criticalPathEnabled: true,  // Highlight the critical path
+            criticalPathStyle: {
+              stroke: '#e64a19',
+              strokeWidth: 2
+            }
+          }
+        };
+
+        // Draw the Gantt chart
+        chart = new google.visualization.Gantt(document.getElementById('gantt_chart'));
+        resizeChart();
+      }
+
+      // Resize the chart when the window size changes
+      window.onresize = function() {
+        resizeChart();
+      };
+
+      function resizeChart() {
+        // Set the new dimensions of the chart based on the container's size
+        var containerWidth = document.getElementById('gantt_chart').offsetWidth;
+        var containerHeight = document.getElementById('gantt_chart').offsetHeight;
+
+        // Redraw the chart with updated size
+        chart.draw(data, {
+          ...options,
+          width: containerWidth,
+          height: Math.max(containerHeight, 600) // Ensure minimum height of 400px
+        });
+      }
+    </script>
+  </head>
+  <body>
+
+    <div id="gantt_chart"></div>
+  </body>
+</html>
